@@ -176,8 +176,7 @@ entity.onMobSpawn = function(mob)
     mob:setLocalVar("nextSlaveSpawnTime", os.time() + 30) -- spawn first 30s from now
     mob:setLocalVar("posNum", math.random(1, 9))
     mob:setMobMod(xi.mobMod.ADD_EFFECT, 1)
-    -- 60 damage spikes with duration of 1 hour (in case stolen by thf)
-    mob:addStatusEffectEx(xi.effect.SHOCK_SPIKES, 0, 60, 0, 3600)
+    mob:addStatusEffectEx(xi.effect.SHOCK_SPIKES, 0, 60, 0, 0) -- ~60 damage
     mob:setSpeed(20)
 end
 
@@ -196,9 +195,12 @@ entity.onMobFight = function(mob, target)
         trySpawnSlaveGlobe(mob, os.time(), spawnedSlaves, notSpawnedSlaves, validSlavePositions)
     end
 
-    if not mob:hasStatusEffect(xi.effect.SHOCK_SPIKES) then
-        -- 60 damage spikes with duration of 1 hour (in case stolen by thf)
-        mob:addStatusEffectEx(xi.effect.SHOCK_SPIKES, 0, 60, 0, 3600)
+    if not mob:hasStatusEffect(xi.effect.SHOCK_SPIKES) and mob:getLocalVar("control") == 0 then
+        mob:setLocalVar("control", 1)
+        mob:castSpell(251, mob) -- shock spikes
+        mob:timer(15000, function(mobArg1)
+            mobArg1:setLocalVar("control", 0)
+        end)
     end
 end
 
@@ -233,7 +235,6 @@ entity.onMobRoam = function(mob)
         while newPos == posNum do
             newPos = math.random(1, 9)
         end
-
         for k, pos in pairs(pathNodes) do
             if k == newPos then
                 moveX = pos.x
@@ -242,14 +243,8 @@ entity.onMobRoam = function(mob)
                 break
             end
         end
-
         mob:pathTo(moveX, moveY, moveZ)
         mob:setLocalVar("posNum", newPos)
-    end
-
-    if not mob:hasStatusEffect(xi.effect.SHOCK_SPIKES) then
-        -- 60 damage spikes with duration of 1 hour (in case stolen by thf)
-        mob:addStatusEffectEx(xi.effect.SHOCK_SPIKES, 0, 60, 0, 3600)
     end
 end
 

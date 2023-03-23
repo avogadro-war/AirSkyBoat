@@ -15,17 +15,14 @@ end
 
 local function registerRegionAroundNPC(zone, NPCID, zoneID)
     local npc = GetNPCByID(NPCID)
+    local x = npc:getXPos()
+    local y = npc:getYPos()
+    local z = npc:getZPos()
+    local distance = 7
 
-    if npc ~= nil  then
-        local x = npc:getXPos()
-        local y = npc:getYPos()
-        local z = npc:getZPos()
-        local distance = 7
-
-        zone:registerTriggerArea(zoneID,
-            x - distance, y - distance, z - distance,
-            x + distance, y + distance, z + distance)
-    end
+    zone:registerTriggerArea(zoneID,
+        x - distance, y - distance, z - distance,
+        x + distance, y + distance, z + distance)
 end
 
 zoneObject.onInitialize = function(zone)

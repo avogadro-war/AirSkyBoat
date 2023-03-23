@@ -39,18 +39,14 @@ end
 -- Check if Extravaganza is active, hide [S] vendors if inactive
 ----------------------------------------------------------------
 
-xi.extravaganza.shadowEraHide = function(npcId)
+xi.extravaganza.shadowEraHide = function(npc)
     local active = xi.extravaganza.campaignActive()
 
     if
         active == xi.extravaganza.campaign.NONE or
         active == xi.extravaganza.campaign.SPRING_FALL
     then
-        local npc = GetNPCByID(npcId)
-
-        if npc ~= nil then
-            npc:setStatus(xi.status.DISAPPEAR)
-        end
+        GetNPCByID(npc):setStatus(xi.status.DISAPPEAR)
     end
 end
 
